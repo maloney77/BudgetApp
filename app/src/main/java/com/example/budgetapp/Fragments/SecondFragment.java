@@ -1,4 +1,4 @@
-package com.example.budgetapp;
+package com.example.budgetapp.Fragments;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +14,9 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
+
+import com.example.budgetapp.R;
+import com.example.budgetapp.ViewModels.BudgetRequestViewModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;

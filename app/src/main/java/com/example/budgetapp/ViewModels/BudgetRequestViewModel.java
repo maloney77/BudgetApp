@@ -1,4 +1,4 @@
-package com.example.budgetapp;
+package com.example.budgetapp.ViewModels;
 
 import androidx.lifecycle.ViewModel;
 
@@ -7,8 +7,10 @@ import com.android.volley.RequestQueue;
 import org.json.JSONArray;
 
 public class BudgetRequestViewModel extends ViewModel {
+    //request queue that is passed from activities to fragments
     private RequestQueue requestQueue;
 
+    //list of budget categories passed between fragments
     private JSONArray categories;
 
     public RequestQueue getRequestQueue() {
