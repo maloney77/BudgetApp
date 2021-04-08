@@ -72,6 +72,8 @@ public class SecondFragment extends Fragment {
 
             Button categoryButton = new Button(getContext());
 
+//            categoryButton.setWidth(300);
+
             //sets layout params width as 0 so we can set to match constraint
             categoryButton.setLayoutParams(new ConstraintLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT));
 
@@ -93,10 +95,30 @@ public class SecondFragment extends Fragment {
             set.constrainDefaultWidth(categoryButton.getId(), ConstraintSet.MATCH_CONSTRAINT_SPREAD);
 
             //connection logic: append button to guidline if its the first one, otherwise append to previous button
-            if(i < 1){
-                set.connect(categoryButton.getId(), ConstraintSet.TOP, R.id.guideline, ConstraintSet.BOTTOM, 8);
-            }else{
-                set.connect(categoryButton.getId(), ConstraintSet.TOP, buttonIds.get(i - 1), ConstraintSet.BOTTOM);
+            if(i ==0){
+                set.connect(categoryButton.getId(), ConstraintSet.TOP, R.id.top_guideline, ConstraintSet.BOTTOM, 8);
+                set.connect(categoryButton.getId(), ConstraintSet.LEFT, R.id.left_guideline, ConstraintSet.RIGHT, 8);
+                set.connect(categoryButton.getId(), ConstraintSet.RIGHT, R.id.middle_guideline, ConstraintSet.LEFT, 8);
+            } else if(i == 1) {
+                //if even append to previous button
+                set.connect(categoryButton.getId(), ConstraintSet.TOP, R.id.top_guideline, ConstraintSet.BOTTOM, 8);
+
+                set.connect(categoryButton.getId(), ConstraintSet.RIGHT, R.id.right_guideline, ConstraintSet.LEFT, 8);
+
+                set.connect(categoryButton.getId(), ConstraintSet.LEFT, R.id.middle_guideline, ConstraintSet.RIGHT);
+            }
+            else if(i % 2 !=0) {
+                //if even append to previous button
+                set.connect(categoryButton.getId(), ConstraintSet.TOP, buttonIds.get(i - 2), ConstraintSet.BOTTOM,20);
+
+                set.connect(categoryButton.getId(), ConstraintSet.RIGHT, R.id.right_guideline, ConstraintSet.LEFT, 8);
+
+                set.connect(categoryButton.getId(), ConstraintSet.LEFT, R.id.middle_guideline, ConstraintSet.RIGHT);
+            }
+            else if(i % 2 ==0){
+                set.connect(categoryButton.getId(), ConstraintSet.TOP, buttonIds.get(i - 2), ConstraintSet.BOTTOM,20);
+                set.connect(categoryButton.getId(), ConstraintSet.LEFT, R.id.left_guideline, ConstraintSet.RIGHT, 8);
+                set.connect(categoryButton.getId(), ConstraintSet.RIGHT, R.id.middle_guideline, ConstraintSet.LEFT, 8);
             }
 
             //apply set to layout
