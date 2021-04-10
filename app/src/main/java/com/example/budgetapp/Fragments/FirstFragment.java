@@ -2,12 +2,14 @@ package com.example.budgetapp.Fragments;
 
 import android.app.Service;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
@@ -17,6 +19,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.budgetapp.POJO.BudgetCategory;
+import com.example.budgetapp.POJO.BudgetSheet;
 import com.example.budgetapp.R;
 import com.example.budgetapp.ViewModels.BudgetRequestViewModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -86,25 +90,41 @@ public class FirstFragment extends Fragment {
         view.findViewById(R.id.enter_price).setOnClickListener(v -> {
                 System.out.println("got click event");
                 //get categories
-                  AsyncTask.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        try{
-                            Sheets sheetService = requestViewModel.getSheetService();
-                            ValueRange response = sheetService.spreadsheets().values()
-                                    .get(spreadsheetId, range)
-                                    .execute();
-                            //TODO: add failure to retrieve snackbar
-                            requestViewModel.setCategories((ArrayList) response.getValues());
-                            Logger.getLogger("Retrieved categories");
-                            NavHostFragment.findNavController(FirstFragment.this)
-                                    .navigate(R.id.action_FirstFragment_to_SecondFragment);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            Logger.getLogger("Failed to get sheet data");
+
+            BudgetSheet budgetSheet = new BudgetSheet(new ArrayList<>(), spreadsheetId);
+            requestViewModel.setBudgetSheet(budgetSheet);
+
+            AsyncTask.execute(() -> {
+                try{
+                    ValueRange response = requestViewModel.getSheetService().spreadsheets().values()
+                            .get(requestViewModel.getBudgetSheet().getSpreadSheetId(), range)
+                            .execute();
+                    if(response != null) {
+                        //TODO: add failure to retrieve snackbar
+
+
+                        for (int i = 0; i < response.getValues().size(); i++) {
+                            String name = response.getValues().get(i).toString();
+                            Integer row = Integer.parseInt(response.getRange().replace("Sheet1!", "").split(":")[0].substring(1)) + i;
+                            String column = "" + response.getRange().replace("Sheet1!", "").split(":")[0].charAt(0);
+
+                            budgetSheet.addCategory(new BudgetCategory(name, column, row));
                         }
+
+                        requestViewModel.setBudgetSheet(budgetSheet);
+                        Logger.getLogger("Retrieved categories");
+                        //navigate to next fragment
+                        NavHostFragment.findNavController(FirstFragment.this)
+                                .navigate(R.id.action_FirstFragment_to_SecondFragment);
                     }
-                });
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Logger.getLogger("Failed to get sheet data");
+                }
+            });
+
+
 
         });
 
