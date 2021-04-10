@@ -46,7 +46,7 @@ public class SecondFragment extends Fragment {
         try {
             //create category buttons
             createCategoryButtons(requestViewModel.getCategories(), view);
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -60,7 +60,7 @@ public class SecondFragment extends Fragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
-    public void createCategoryButtons(JSONArray categories, View view) throws JSONException {
+    public void createCategoryButtons(ArrayList categories, View view) throws JSONException {
 
         //gets constraint layout
         ConstraintLayout layout = view.findViewById(R.id.second_layout);
@@ -68,11 +68,9 @@ public class SecondFragment extends Fragment {
         ConstraintSet set = new ConstraintSet();
 
         ArrayList<Integer> buttonIds= new ArrayList<>();
-        for (int i = 0; i < categories.length(); i++) {
+        for (int i = 0; i < categories.size(); i++) {
 
             Button categoryButton = new Button(getContext());
-
-//            categoryButton.setWidth(300);
 
             //sets layout params width as 0 so we can set to match constraint
             categoryButton.setLayoutParams(new ConstraintLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -83,7 +81,7 @@ public class SecondFragment extends Fragment {
             //add view id to list for connection logic
             buttonIds.add(categoryButton.getId());
             //sets button text
-            categoryButton.setText(getBudgetCategory(categories.getJSONObject(i), "name"));
+            categoryButton.setText(categories.get(i).toString());
 
             //add view to layout
             layout.addView(categoryButton,i);
@@ -126,13 +124,14 @@ public class SecondFragment extends Fragment {
         }
     }
 
-    private String getBudgetCategory(JSONObject categories, String targetCategory)
-    {
-        try {
-            return categories.get(targetCategory).toString();
-        }catch (Exception e) {
-            System.out.println(e);
-        }
-        return "";
-    }
+//    private String getBudgetCategory(ArrayList categories, String targetCategory)
+//    {
+//        try {
+//            cat
+//            return categories.get(targetCategory).toString();
+//        }catch (Exception e) {
+//            System.out.println(e);
+//        }
+//        return "";
+//    }
 }

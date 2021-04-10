@@ -1,5 +1,7 @@
 package com.example.budgetapp.Fragments;
 
+import android.app.Service;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,15 +19,52 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.budgetapp.R;
 import com.example.budgetapp.ViewModels.BudgetRequestViewModel;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
+import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.store.FileDataStoreFactory;
+import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.SheetsScopes;
+import com.google.api.services.sheets.v4.model.Spreadsheet;
+import com.google.api.services.sheets.v4.model.SpreadsheetProperties;
+import com.google.api.services.sheets.v4.model.ValueRange;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class FirstFragment extends Fragment {
 
     private BudgetRequestViewModel requestViewModel;
+    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+
+    /**
+     * Global instance of the scopes required by this quickstart.
+     * If modifying these scopes, delete your previously saved tokens/ folder.
+     */
+
+    final String spreadsheetId = "1MGCUqJkQ5J-5KiZ_gdDU04AU2zZ9XH4eLPgZsTi4NjQ";
+    final String range = "A18:A25";
 
     @Override
     public View onCreateView(
@@ -39,44 +78,41 @@ public class FirstFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //set request details
-        String url = "https://jsonplaceholder.typicode.com/users";
-
         //get queue from view model
         requestViewModel = new ViewModelProvider(requireActivity()).get(BudgetRequestViewModel.class);
-        RequestQueue requestQueue = requestViewModel.getRequestQueue();
+
 
         //enter price button listener
         view.findViewById(R.id.enter_price).setOnClickListener(v -> {
                 System.out.println("got click event");
                 //get categories
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                    response -> {
-                        System.out.println("got response");
-                        JSONArray categories = new JSONArray();
-                        // attempt to convert string to json array
-                        try {
-                            categories = new JSONArray(response);
-                        } catch (JSONException e) {
+                  AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try{
+                            Sheets sheetService = requestViewModel.getSheetService();
+                            ValueRange response = sheetService.spreadsheets().values()
+                                    .get(spreadsheetId, range)
+                                    .execute();
+                            //TODO: add failure to retrieve snackbar
+                            requestViewModel.setCategories((ArrayList) response.getValues());
+                            Logger.getLogger("Retrieved categories");
+                            NavHostFragment.findNavController(FirstFragment.this)
+                                    .navigate(R.id.action_FirstFragment_to_SecondFragment);
+                        } catch (IOException e) {
                             e.printStackTrace();
+                            Logger.getLogger("Failed to get sheet data");
                         }
-                        Logger.getLogger("Thing");
-                        //set categories for second fragment
-                        requestViewModel.setCategories(categories);
-                        NavHostFragment.findNavController(FirstFragment.this)
-                                .navigate(R.id.action_FirstFragment_to_SecondFragment);
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Logger.getLogger("That didn't work!");
-                }
-            });
+                    }
+                });
 
-            requestQueue.add(stringRequest);
         });
 
 
     }
+
+
+
 
 
 
