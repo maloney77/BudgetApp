@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/second_layout"
-    tools:context=".SecondFragment">
+    android:id="@+id/second_layout">
 
 <!--    <TextView-->
 <!--        android:id="@+id/textview_second"-->
@@ -24,6 +23,8 @@
         android:text="@string/previous"
 
          />
+
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/top_guideline"
@@ -52,6 +53,18 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="205dp" />
+
+    <TextView
+        android:id="@+id/category_amount"
+        android:layout_width="111dp"
+        android:layout_height="68dp"
+        android:layout_marginEnd="248dp"
+        android:layout_marginRight="248dp"
+        android:layout_marginBottom="256dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:textSize="24sp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
