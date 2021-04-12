@@ -85,6 +85,16 @@ public class FirstFragment extends Fragment {
         //get queue from view model
         requestViewModel = new ViewModelProvider(requireActivity()).get(BudgetRequestViewModel.class);
 
+        View welcomeMessage = view.findViewById(R.id.textview_first);
+        View enterPriceButton = view.findViewById(R.id.enter_price);
+
+        //TODO: hide sign in button after logging in and figure out why the other two are null
+        if(!requestViewModel.isSignedIn() ) {
+            //hide welcome message and enter price button
+            welcomeMessage.setVisibility(View.GONE);
+            enterPriceButton.setVisibility(View.GONE);
+        }
+
 
         //enter price button listener
         view.findViewById(R.id.enter_price).setOnClickListener(v -> {
@@ -104,7 +114,7 @@ public class FirstFragment extends Fragment {
 
 
                         for (int i = 0; i < response.getValues().size(); i++) {
-                            String name = response.getValues().get(i).toString();
+                            String name = response.getValues().get(i).toString().replace("[","").replace("]","");
                             Integer row = Integer.parseInt(response.getRange().replace("Sheet1!", "").split(":")[0].substring(1)) + i;
                             String column = "" + response.getRange().replace("Sheet1!", "").split(":")[0].charAt(0);
 

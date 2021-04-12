@@ -18,23 +18,26 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.budgetapp.POJO.BudgetCategory;
-import com.example.budgetapp.POJO.BudgetMonth;
 import com.example.budgetapp.R;
 import com.example.budgetapp.ViewModels.BudgetRequestViewModel;
+import com.example.budgetapp.ViewModels.CategoryEditViewModel;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class SecondFragment extends Fragment {
 
     private BudgetRequestViewModel requestViewModel;
+    private CategoryEditViewModel categoryEditViewModel;
 
     @Override
     public View onCreateView(
@@ -50,6 +53,7 @@ public class SecondFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         //get view model
         requestViewModel = new ViewModelProvider(requireActivity()).get(BudgetRequestViewModel.class);
+        categoryEditViewModel = new ViewModelProvider(requireActivity()).get(CategoryEditViewModel.class);
 
         try {
             //create category buttons
@@ -79,6 +83,7 @@ public class SecondFragment extends Fragment {
         for (int i = 0; i < categories.size(); i++) {
 
             Button categoryButton = new Button(getContext());
+            int index = i;
 
             //sets layout params width as 0 so we can set to match constraint
             categoryButton.setLayoutParams(new ConstraintLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -110,12 +115,19 @@ public class SecondFragment extends Fragment {
                                 .execute();
 
                         TextView category_amount = view.findViewById(R.id.category_amount);
-                        if (response.getValues() != null) {
-                            category_amount.setText(response.getValues().get(0).toString());
-                        } else {
-                            category_amount.setText("Nope");
-                        }
-                    } catch (IOException e) {
+
+                            String displayCellValue = response.getValues() != null ? response.getValues().get(0).get(0).toString() : "$0.00";
+                            Number decimalCellValue = NumberFormat.getCurrencyInstance(Locale.US)
+                                    .parse(displayCellValue);
+
+                            category_amount.setText(displayCellValue);
+                            categoryEditViewModel.setBudgetCategory(categories.get(index));
+                            categoryEditViewModel.setCategoryValue(decimalCellValue);
+                            categoryEditViewModel.setCellToEdit(categoryMonthCell);
+                            NavHostFragment.findNavController(SecondFragment.this)
+                                    .navigate(R.id.action_SecondFragment_to_ThirdFragment);
+
+                    } catch (IOException | ParseException e) {
                         e.printStackTrace();
                     }
                 });
@@ -162,14 +174,4 @@ public class SecondFragment extends Fragment {
         }
     }
 
-//    private String getBudgetCategory(ArrayList categories, String targetCategory)
-//    {
-//        try {
-//            cat
-//            return categories.get(targetCategory).toString();
-//        }catch (Exception e) {
-//            System.out.println(e);
-//        }
-//        return "";
-//    }
 }

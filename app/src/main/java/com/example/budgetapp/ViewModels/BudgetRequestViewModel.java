@@ -28,6 +28,16 @@ public class BudgetRequestViewModel extends ViewModel {
 
     private Sheets sheetService;
 
+    private boolean signedIn;
+
+    public void setSignedIn(boolean signedIn) {
+        this.signedIn = signedIn;
+    }
+
+    public boolean isSignedIn() {
+        return signedIn;
+    }
+
     public ValueRange getValuesFromSheet(String range) {
         final ValueRange[] response = {null};
 

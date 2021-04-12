@@ -1,5 +1,6 @@
 package com.example.budgetapp;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -45,12 +46,14 @@ public class MainActivity extends AppCompatActivity {
 
     final int RC_SIGN_IN = 1;
 
+    @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         //set requestViewModel
         requestViewModel = new ViewModelProvider(this).get(BudgetRequestViewModel.class);
@@ -63,15 +66,18 @@ public class MainActivity extends AppCompatActivity {
         //get last google account
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 
+
         View signInButton = findViewById(R.id.sign_in_button);
 
-        //TODO: hide sign in button when signed in
+       //TODO: hide sign in button after logging in and switching frames
         if(account == null) {
             //hide welcome message and enter price button
-            findViewById(R.id.textview_first).setVisibility(View.GONE);
-            findViewById(R.id.enter_price).setVisibility(View.GONE);;
+            signInButton.setVisibility(View.VISIBLE);
+            requestViewModel.setSignedIn(false);
+
         } else {
             //hide sign in button and display front fragment
+            requestViewModel.setSignedIn(true);
             signInButton.setVisibility(View.GONE);
             signInToSheetService(account);
         }
