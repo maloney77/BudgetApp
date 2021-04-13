@@ -6,7 +6,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,6 +25,8 @@ import com.example.budgetapp.POJO.BudgetCategory;
 import com.example.budgetapp.R;
 import com.example.budgetapp.ViewModels.BudgetRequestViewModel;
 import com.example.budgetapp.ViewModels.CategoryEditViewModel;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.api.services.sheets.v4.model.UpdateValuesResponse;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
 import org.json.JSONException;
@@ -32,9 +38,13 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.logging.Logger;
 
-public class SecondFragment extends Fragment {
+public class SecondFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private BudgetRequestViewModel requestViewModel;
     private CategoryEditViewModel categoryEditViewModel;
@@ -55,9 +65,14 @@ public class SecondFragment extends Fragment {
         requestViewModel = new ViewModelProvider(requireActivity()).get(BudgetRequestViewModel.class);
         categoryEditViewModel = new ViewModelProvider(requireActivity()).get(CategoryEditViewModel.class);
 
+         view.findViewById(R.id.submit_button).setVisibility(View.GONE);
+         view.findViewById(R.id.purchase_input).setVisibility(View.GONE);
+
+
         try {
             //create category buttons
-            createCategoryButtons(requestViewModel.getBudgetSheet().getCategories(), view);
+            populateCategorySpinner(requestViewModel.getBudgetSheet().getCategories(), view);
+//            createCategoryButtons(requestViewModel.getBudgetSheet().getCategories(), view);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -69,109 +84,126 @@ public class SecondFragment extends Fragment {
                         .navigate(R.id.action_SecondFragment_to_FirstFragment);
             }
         });
+
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
-    public void createCategoryButtons(ArrayList<BudgetCategory> categories, View view) throws JSONException {
+    private void populateCategorySpinner(ArrayList<BudgetCategory> categories, View view) {
 
-        //gets constraint layout
-        ConstraintLayout layout = view.findViewById(R.id.second_layout);
-        //creates constraint set
-        ConstraintSet set = new ConstraintSet();
 
-        ArrayList<Integer> buttonIds= new ArrayList<>();
-        for (int i = 0; i < categories.size(); i++) {
+        List<String> categoryNames = new ArrayList<String>();
+        categoryNames.add("Select Budget Category");
+        categories.forEach(cat -> {
+            categoryNames.add(cat.getName());
+        });
 
-            Button categoryButton = new Button(getContext());
-            int index = i;
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                getActivity(), android.R.layout.simple_spinner_item, categoryNames
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        Spinner categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
 
-            //sets layout params width as 0 so we can set to match constraint
-            categoryButton.setLayoutParams(new ConstraintLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT));
+        categorySpinner.setAdapter(adapter);
+        categorySpinner.setOnItemSelectedListener(this);
 
-            //generate random view ids
-            categoryButton.setId(View.generateViewId());
+    }
 
-            //add view id to list for connection logic
-            buttonIds.add(categoryButton.getId());
-            //sets button text
-            categoryButton.setText(categories.get(i).getName());
+    public void onItemSelected(AdapterView<?> parent, View view,
+                               int pos, long id) {
+        // An item was selected. You can retrieve the selected item using
+        // parent.getItemAtPosition(pos)
+        Button submitButton = getView().findViewById(R.id.submit_button);
+        EditText purchaseInput = getView().findViewById(R.id.purchase_input);
+        if(!parent.getItemAtPosition(pos).toString().equals("Select Budget Category")) {
 
-            Month currentMonth = null;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                currentMonth = LocalDate.now().getMonth();
-            }
 
-            //grab current month cell letter
+            submitButton.setVisibility(View.VISIBLE);
+            purchaseInput.setVisibility(View.VISIBLE);
 
-            String categoryMonthCell = categories.get(i).getCategoryMonthCell(currentMonth.name());
 
-            categoryButton.setOnClickListener(v -> {
-                AsyncTask.execute(() -> {
-                    try{
-                        //get current month
+            HashMap<String, BudgetCategory> categoryMap = new HashMap<>();
 
-                        ValueRange response = requestViewModel.getSheetService().spreadsheets().values()
-                                .get(requestViewModel.getBudgetSheet().getSpreadSheetId(), categoryMonthCell)
-                                .execute();
-
-                        TextView category_amount = view.findViewById(R.id.category_amount);
-
-                            String displayCellValue = response.getValues() != null ? response.getValues().get(0).get(0).toString() : "$0.00";
-                            Number decimalCellValue = NumberFormat.getCurrencyInstance(Locale.US)
-                                    .parse(displayCellValue);
-
-                            category_amount.setText(displayCellValue);
-                            categoryEditViewModel.setBudgetCategory(categories.get(index));
-                            categoryEditViewModel.setCategoryValue(decimalCellValue);
-                            categoryEditViewModel.setCellToEdit(categoryMonthCell);
-                            NavHostFragment.findNavController(SecondFragment.this)
-                                    .navigate(R.id.action_SecondFragment_to_ThirdFragment);
-
-                    } catch (IOException | ParseException e) {
-                        e.printStackTrace();
-                    }
-                });
+            requestViewModel.getBudgetSheet().getCategories().forEach(cat -> {
+                categoryMap.put(cat.getName(), cat);
             });
 
-            //add view to layout
-            layout.addView(categoryButton,i);
+            BudgetCategory selectedCategory = categoryMap.get(parent.getItemAtPosition(pos).toString());
 
-            //idk what this does
-            set.clone(layout);
 
-            //set width of button
-            set.constrainDefaultWidth(categoryButton.getId(), ConstraintSet.MATCH_CONSTRAINT_SPREAD);
+            submitButton.setOnClickListener(l -> {
+                String cellToEdit = selectedCategory.getCategoryMonthCell(LocalDate.now().getMonth().name());
 
-            //connection logic: append button to guidline if its the first one, otherwise append to previous button
-            if(i ==0){
-                set.connect(categoryButton.getId(), ConstraintSet.TOP, R.id.top_guideline, ConstraintSet.BOTTOM, 8);
-                set.connect(categoryButton.getId(), ConstraintSet.LEFT, R.id.left_guideline, ConstraintSet.RIGHT, 8);
-                set.connect(categoryButton.getId(), ConstraintSet.RIGHT, R.id.middle_guideline, ConstraintSet.LEFT, 8);
-            } else if(i == 1) {
-                //if even append to previous button
-                set.connect(categoryButton.getId(), ConstraintSet.TOP, R.id.top_guideline, ConstraintSet.BOTTOM, 8);
-
-                set.connect(categoryButton.getId(), ConstraintSet.RIGHT, R.id.right_guideline, ConstraintSet.LEFT, 8);
-
-                set.connect(categoryButton.getId(), ConstraintSet.LEFT, R.id.middle_guideline, ConstraintSet.RIGHT);
-            }
-            else if(i % 2 !=0) {
-                //if even append to previous button
-                set.connect(categoryButton.getId(), ConstraintSet.TOP, buttonIds.get(i - 2), ConstraintSet.BOTTOM,20);
-
-                set.connect(categoryButton.getId(), ConstraintSet.RIGHT, R.id.right_guideline, ConstraintSet.LEFT, 8);
-
-                set.connect(categoryButton.getId(), ConstraintSet.LEFT, R.id.middle_guideline, ConstraintSet.RIGHT);
-            }
-            else if(i % 2 ==0){
-                set.connect(categoryButton.getId(), ConstraintSet.TOP, buttonIds.get(i - 2), ConstraintSet.BOTTOM,20);
-                set.connect(categoryButton.getId(), ConstraintSet.LEFT, R.id.left_guideline, ConstraintSet.RIGHT, 8);
-                set.connect(categoryButton.getId(), ConstraintSet.RIGHT, R.id.middle_guideline, ConstraintSet.LEFT, 8);
-            }
-
-            //apply set to layout
-            set.applyTo(layout);
+                updateCategoryMonthCell(cellToEdit, purchaseInput.getText().toString());
+                purchaseInput.getText().clear();
+            });
+        } else {
+            submitButton.setVisibility(View.GONE);
+            purchaseInput.setVisibility(View.GONE);
         }
+
+
     }
+
+    private void updateCategoryMonthCell(String cellAddressToRetrieve, String purchaseAmountToAdd) {
+        final Number[] decimalCellValue = {0};
+        AsyncTask.execute(() -> {
+            try{
+                //get current month
+
+                ValueRange response = requestViewModel.getSheetService().spreadsheets().values()
+                        .get(requestViewModel.getBudgetSheet().getSpreadSheetId(), cellAddressToRetrieve)
+                        .execute();
+
+
+                String displayCellValue = response.getValues() != null ? response.getValues().get(0).get(0).toString() : "$0.00";
+                decimalCellValue[0] = NumberFormat.getCurrencyInstance(Locale.US)
+                        .parse(displayCellValue);
+
+                updateCellWithNewValue(cellAddressToRetrieve,  purchaseAmountToAdd, decimalCellValue[0].floatValue());
+
+
+            } catch (IOException | ParseException e) {
+                e.printStackTrace();
+            }
+        });
+  ;
+    }
+
+    private void updateCellWithNewValue(String cellToEdit, String purchaseAmountToAdd, Float currentCellValue) {
+
+
+        List<List<Object>> values = Arrays.asList(
+                Arrays.asList(
+                        currentCellValue + Float.parseFloat(purchaseAmountToAdd)
+                )
+        );
+        ValueRange newCellValue = new ValueRange().setValues(values);
+        AsyncTask.execute(() -> {
+            try {
+                UpdateValuesResponse result =
+                        requestViewModel.getSheetService().spreadsheets().values().update(
+                                requestViewModel.getBudgetSheet().getSpreadSheetId(), cellToEdit, newCellValue)
+                                .setValueInputOption("USER_ENTERED")
+                                .execute();
+                if(result == null || result.getUpdatedCells() == 0){
+                    Logger.getLogger("No cells updated");
+
+                } else {
+                    Snackbar.make(getView(), "Update successful, new value: " + newCellValue.getValues().get(0).get(0) , Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    Logger.getLogger("Successfully updated " + result.getUpdatedCells() + " cells");
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Another interface callback
+    }
+
+
 
 }
