@@ -28,10 +28,10 @@
 
     <Spinner
         android:id="@+id/category_spinner"
-        android:layout_width="279dp"
-        android:layout_height="39dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="80dp"
+        android:layout_width="239dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="90dp"
         android:layout_marginBottom="164dp"
         app:layout_constraintBottom_toTopOf="@+id/purchase_input"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,10 +42,11 @@
         android:layout_width="135dp"
         android:layout_height="68dp"
         android:layout_marginStart="45dp"
-        android:layout_marginTop="164dp"
+        android:layout_marginTop="108dp"
         android:layout_marginEnd="232dp"
         android:inputType="numberDecimal"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/category_spinner" />
 
@@ -54,10 +55,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
-        android:layout_marginTop="388dp"
+        android:layout_marginTop="340dp"
         android:layout_marginEnd="78dp"
         android:text="Submit"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/purchase_input"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -68,7 +70,7 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="93dp" />
 
-<!--    <androidx.constraintlayout.widget.Guideline-->
+    <!--    <androidx.constraintlayout.widget.Guideline-->
 <!--        android:id="@+id/right_guideline"-->
 <!--        android:layout_width="wrap_content"-->
 <!--        android:layout_height="wrap_content"-->

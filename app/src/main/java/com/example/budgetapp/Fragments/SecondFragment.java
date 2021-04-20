@@ -47,7 +47,6 @@ import java.util.logging.Logger;
 public class SecondFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private BudgetRequestViewModel requestViewModel;
-    private CategoryEditViewModel categoryEditViewModel;
 
     @Override
     public View onCreateView(
@@ -63,7 +62,6 @@ public class SecondFragment extends Fragment implements AdapterView.OnItemSelect
         super.onViewCreated(view, savedInstanceState);
         //get view model
         requestViewModel = new ViewModelProvider(requireActivity()).get(BudgetRequestViewModel.class);
-        categoryEditViewModel = new ViewModelProvider(requireActivity()).get(CategoryEditViewModel.class);
 
          view.findViewById(R.id.submit_button).setVisibility(View.GONE);
          view.findViewById(R.id.purchase_input).setVisibility(View.GONE);
@@ -77,13 +75,10 @@ public class SecondFragment extends Fragment implements AdapterView.OnItemSelect
             e.printStackTrace();
         }
 
-        view.findViewById(R.id.button_second).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        view.findViewById(R.id.button_second).setOnClickListener(view1 ->
                 NavHostFragment.findNavController(SecondFragment.this)
-                        .navigate(R.id.action_SecondFragment_to_FirstFragment);
-            }
-        });
+                .navigate(R.id.action_SecondFragment_to_FirstFragment)
+        );
 
     }
 
@@ -109,8 +104,7 @@ public class SecondFragment extends Fragment implements AdapterView.OnItemSelect
 
     public void onItemSelected(AdapterView<?> parent, View view,
                                int pos, long id) {
-        // An item was selected. You can retrieve the selected item using
-        // parent.getItemAtPosition(pos)
+
         Button submitButton = getView().findViewById(R.id.submit_button);
         EditText purchaseInput = getView().findViewById(R.id.purchase_input);
         if(!parent.getItemAtPosition(pos).toString().equals("Select Budget Category")) {

@@ -3,29 +3,101 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
-    <TextView
-        android:id="@+id/textview_first"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ready to enter a purchase?"
-        app:layout_constraintBottom_toTopOf="@id/enter_price"
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/spent_card"
+        android:layout_width="360dp"
+        android:layout_height="117dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="396dp"
+        app:cardCornerRadius="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/spent_title"
+            android:layout_width="275dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:text="How Much You Spent"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/saved_card"
+        android:layout_width="360dp"
+        android:layout_height="117dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="68dp"
+        app:cardCornerRadius="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/saved_title"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:text="How Much You Saved"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/remaining_card"
+        android:layout_width="360dp"
+        android:layout_height="117dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="232dp"
+        app:cardCornerRadius="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/remaining_title"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:text="How Much You Have Left"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+    </androidx.cardview.widget.CardView>
 
     <Button
         android:id="@+id/enter_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="544dp"
+        android:background="@color/design_default_color_secondary_variant"
         android:text="Enter Price"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textview_first" />
+        app:layout_constraintHorizontal_bias="0.441"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/enter_price_text"
+        android:layout_width="348dp"
+        android:layout_height="38dp"
+        android:text="Press Enter Price to enter a new purchase"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="80dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
