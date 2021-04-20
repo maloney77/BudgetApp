@@ -12,7 +12,7 @@
         android:layout_width="360dp"
         android:layout_height="117dp"
         android:layout_gravity="center"
-        android:layout_marginBottom="396dp"
+        android:layout_marginBottom="388dp"
         app:cardCornerRadius="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -80,10 +80,11 @@
         android:id="@+id/enter_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="544dp"
-        android:background="@color/design_default_color_secondary_variant"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="@color/calm_blue"
+        android:textColor="@color/white"
         android:text="Enter Price"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/spent_card"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.441"
         app:layout_constraintStart_toStartOf="parent" />
@@ -92,12 +93,16 @@
         android:id="@+id/enter_price_text"
         android:layout_width="348dp"
         android:layout_height="38dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="38dp"
+        android:layout_marginBottom="28dp"
         android:text="Press Enter Price to enter a new purchase"
         android:textAlignment="center"
         android:textSize="18sp"
         android:textStyle="bold"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="80dp" />
+        app:layout_constraintBottom_toTopOf="@+id/enter_price"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
