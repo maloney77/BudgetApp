@@ -1,7 +1,6 @@
 package com.example.budgetapp;
 
 import android.annotation.SuppressLint;
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,9 +10,12 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.android.volley.toolbox.Volley;
+import com.example.budgetapp.Fragments.FirstFragment;
 import com.example.budgetapp.ViewModels.BudgetRequestViewModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
 
         //set requestViewModel
@@ -143,17 +146,18 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-//        Fragment overviewFragment = getFragmentManager().findFragmentById(R.id.overview_fragment);
-//        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//        ft.detach(frg);
-//        ft.attach(frg);
-//        ft.commit();
+
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
+            //TODO:technically this works but should just refresh the fragment
+            finish();
+            startActivity(getIntent());
+
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
 
 }

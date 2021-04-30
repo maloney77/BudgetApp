@@ -3,12 +3,14 @@ package com.example.budgetapp.Fragments;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -134,6 +136,13 @@ public class FirstFragment extends Fragment {
 
     }
 
+    public void refreshFragment(){
+        final FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.detach(this);
+        ft.attach(this);
+        ft.commit();
+    }
+
 
     private void populateBillCategoriesFromSpreadsheet(ValueRange sheetValues) {
             //populate all the bill categories
@@ -184,4 +193,5 @@ public class FirstFragment extends Fragment {
         }
 
     }
+
 }
