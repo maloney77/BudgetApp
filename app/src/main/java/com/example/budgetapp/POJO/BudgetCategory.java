@@ -4,11 +4,27 @@ public class BudgetCategory {
     String name;
     String column;
     Integer row;
+    String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public BudgetCategory(String name, String column, Integer row) {
         this.name = name;
         this.column = column;
         this.row = row;
+    }
+
+    public BudgetCategory(String name, String column, Integer row, String type) {
+        this.name = name;
+        this.column = column;
+        this.row = row;
+        this.type = type;
     }
 
     public String getCell() {

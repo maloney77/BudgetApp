@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/overview_fragment"
     >
 
 
@@ -28,6 +29,17 @@
             android:text="How Much You Spent"
             android:textSize="25sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/spent_amount"
+            android:layout_width="248dp"
+            android:layout_height="47dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="55dp"
+            android:textAlignment="center"
+            android:text=""
+            android:textSize="25sp" />
+
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
@@ -74,6 +86,16 @@
             android:text="How Much You Have Left"
             android:textSize="25sp"
             android:textStyle="bold" />
+        <TextView
+            android:id="@+id/remaining_amount"
+            android:layout_width="248dp"
+            android:layout_height="47dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="55dp"
+            android:textAlignment="center"
+            android:text=""
+            android:textSize="25sp" />
+
     </androidx.cardview.widget.CardView>
 
     <Button

@@ -1,5 +1,7 @@
 package com.example.budgetapp.POJO;
 
+import com.example.budgetapp.ViewModels.BudgetRequestViewModel;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -7,6 +9,24 @@ public class BudgetSheet {
 
     String spreadSheetId;
     ArrayList<BudgetCategory> categories;
+    BudgetCategory totalSpentForMonth;
+    BudgetCategory totalRemainingForMonth;
+
+    public BudgetCategory getTotalRemainingForMonth() {
+        return totalRemainingForMonth;
+    }
+
+    public void setTotalRemainingForMonth(BudgetCategory totalRemainingForMonth) {
+        this.totalRemainingForMonth = totalRemainingForMonth;
+    }
+
+    public BudgetCategory getTotalSpentForMonth() {
+        return totalSpentForMonth;
+    }
+
+    public void setTotalSpentForMonth(BudgetCategory totalSpentForMonth) {
+        this.totalSpentForMonth = totalSpentForMonth;
+    }
 
     public String getSpreadSheetId() {
         return spreadSheetId;
@@ -32,6 +52,7 @@ public class BudgetSheet {
     public ArrayList<BudgetCategory> getCategories() {
         return categories;
     }
+
     public void setCategories(ArrayList<BudgetCategory> categories) {
         this.categories = categories;
     }

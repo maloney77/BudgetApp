@@ -87,7 +87,7 @@ public class SecondFragment extends Fragment implements AdapterView.OnItemSelect
 
         List<String> categoryNames = new ArrayList<String>();
         categoryNames.add("Select Budget Category");
-        categories.forEach(cat -> {
+        categories.stream().filter(cat -> cat.getType().equals("bills")).forEach(cat -> {
             categoryNames.add(cat.getName());
         });
 
