@@ -52,7 +52,7 @@ public class SecondFragment extends Fragment implements AdapterView.OnItemSelect
     static final String INPUT_TYPE_ADDITION = "INPUT_TYPE_ADDITION";
     static final String INPUT_TYPE_SUBTRACTION = "INPUT_TYPE_SUBTRACTION";
     TextView currentCategoryValueView = null;
-
+    static final String CURRENT_CATEGORY_TITLE_BASE = "Current Value of ";
 
 
     @Override
@@ -143,7 +143,7 @@ public class SecondFragment extends Fragment implements AdapterView.OnItemSelect
 
             //Populate UI card with selected category information
             TextView currentCategoryTitle = getView().findViewById(R.id.category_current_value_title);
-            currentCategoryTitle.setText(currentCategoryTitle.getText() + selectedCategory.getName() + ":");
+            currentCategoryTitle.setText(CURRENT_CATEGORY_TITLE_BASE + selectedCategory.getName() + ":");
 
             currentCategoryValueView = getView().findViewById(R.id.category_current_value);
 
