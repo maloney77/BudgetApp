@@ -43,6 +43,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 public class SecondFragment extends Fragment implements AdapterView.OnItemSelectedListener {
@@ -51,6 +52,7 @@ public class SecondFragment extends Fragment implements AdapterView.OnItemSelect
     static final String INPUT_TYPE_ADDITION = "INPUT_TYPE_ADDITION";
     static final String INPUT_TYPE_SUBTRACTION = "INPUT_TYPE_SUBTRACTION";
     TextView currentCategoryValueView = null;
+
 
 
     @Override
@@ -159,8 +161,7 @@ public class SecondFragment extends Fragment implements AdapterView.OnItemSelect
                     String displayCellValue = response.getValues() != null ? response.getValues().get(0).get(0).toString() : "$0.00";
                     currentCategoryValueView.setText(displayCellValue);
 
-                    currentCategoryValue[0] = NumberFormat.getCurrencyInstance(Locale.US)
-                            .parse(displayCellValue);
+                    currentCategoryValue[0] = NumberFormat.getCurrencyInstance(Locale.US).parse(displayCellValue);
 
 
 
@@ -171,16 +172,36 @@ public class SecondFragment extends Fragment implements AdapterView.OnItemSelect
                 }
             });
 
-
+            //set currentCellValue
+            Float currentCellValue = currentCategoryValue[0].floatValue();
 
 
             submitButton.setOnClickListener(l -> {
-                updateCellWithNewValue(cellAddressToEdit, purchaseInput.getText().toString(), currentCategoryValue[0].floatValue(), INPUT_TYPE_ADDITION);
+                //check if the value of the cell has been changed since the page has reset, if it has, use the new value stored in the text view
+                Boolean currentCellValueHasBeenChanged = null;
+                Float convertedValueFromTextView = (float) 0;
+                try {
+                    convertedValueFromTextView = NumberFormat.getCurrencyInstance(Locale.US).parse(currentCategoryValueView.getText().toString()).floatValue();
+                    currentCellValueHasBeenChanged = !convertedValueFromTextView.equals(currentCategoryValue[0].floatValue());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                updateCellWithNewValue(cellAddressToEdit, purchaseInput.getText().toString(), currentCellValueHasBeenChanged ? convertedValueFromTextView : currentCategoryValue[0].floatValue(), INPUT_TYPE_ADDITION);
                 purchaseInput.getText().clear();
+
             });
 
             subtractButton.setOnClickListener(l -> {
-                updateCellWithNewValue(cellAddressToEdit, purchaseInput.getText().toString(), currentCategoryValue[0].floatValue(), INPUT_TYPE_SUBTRACTION);
+                //check if the value of the cell has been changed since the page has reset, if it has, use the new value stored in the text view
+                Boolean currentCellValueHasBeenChanged = null;
+                Float convertedValueFromTextView = (float) 0;
+                try {
+                    convertedValueFromTextView = NumberFormat.getCurrencyInstance(Locale.US).parse(currentCategoryValueView.getText().toString()).floatValue();
+                    currentCellValueHasBeenChanged = !convertedValueFromTextView.equals(currentCategoryValue[0].floatValue());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                updateCellWithNewValue(cellAddressToEdit, purchaseInput.getText().toString(), currentCellValueHasBeenChanged ? convertedValueFromTextView : currentCategoryValue[0].floatValue(), INPUT_TYPE_SUBTRACTION);
                 purchaseInput.getText().clear();
             });
         } else {
